@@ -128,6 +128,7 @@ All request and response schemas are fully described.
 
 The frontend follows a **feature-based structure**, keeping concerns well separated.
 
+```text
 frontend/
  ├── ui
 	└── tasks
@@ -136,7 +137,7 @@ frontend/
 	├── hooks
  ├── domain
  ├── services
- 
+ ```
  
 ### Folder Responsibilities
 
@@ -201,6 +202,7 @@ Contains **infrastructure code** for external communication.
 
 ### Architectural Flow
 
+```text
 UI (Pages / Components)
 ↓
 Hooks
@@ -208,6 +210,8 @@ Hooks
 Services
 ↓
 Backend API
+```
+
 
 This structure ensures:
 - Clear separation of concerns
@@ -281,6 +285,7 @@ Database migrations are applied automatically on startup.
 
 ### 📂 Project Structure
 
+```text
 backend/
  ├── src/
  │   ├── Domain
@@ -296,6 +301,7 @@ frontend/
  ├── domain
  ├── services
  └── tests
+```
 
 ### 🚀 Possible Improvements (Future Versions)
 
