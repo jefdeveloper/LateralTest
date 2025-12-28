@@ -264,21 +264,22 @@ Tests focus on **behavior**, not implementation details.
 
 ### Start the Application
 
-```bash
-docker compose up --build
+```sh
+docker-compose up --build
+```
 
 ### Available Services
 
 | Service | URL | 
-|----------|----------|
+|---------|-----|
 | Frontend  | http://localhost:5173  |
 | Backend  | https://localhost:5001  |
 | API Docs  | https://localhost:5001/scalar  |
-| PostgreSQL  | https://localhost:432  |
+| PostgreSQL | localhost:5432 |
 
 Database migrations are applied automatically on startup.
 
-###📂 Project Structure
+### 📂 Project Structure
 
 backend/
  ├── src/
