@@ -265,7 +265,7 @@ Tests focus on **behavior**, not implementation details.
 ### Start the Application
 
 ```bash
-docker compose up --build```
+docker compose up --build
 
 ### Available Services
 
