@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Lateral.Tasks.API/Lateral.Tasks.API.csproj" Id="54132fb0-fe92-4854-8adc-49b8b6160f91" />
+    <Project Path="src/Lateral.Tasks.Application/Lateral.Tasks.Application.csproj" Id="af4a32b6-6d15-41ee-9385-8855789aa443" />
+    <Project Path="src/Lateral.Tasks.Domain/Lateral.Tasks.Domain.csproj" Id="85b42fd8-393c-46a9-a401-2a7a9b32dd8c" />
+    <Project Path="src/Lateral.Tasks.Infrastructure/Lateral.Tasks.Infrastructure.csproj" Id="d7fce527-ccd5-4943-afab-1bee49f0fcf7" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Lateral.Tasks.API.UnitTests/Lateral.Tasks.API.UnitTests.csproj" Id="395f517f-9825-4ec4-a398-efbf2bfed753" />
+    <Project Path="tests/Lateral.Tasks.Application.UnitTests/Lateral.Tasks.Application.UnitTests.csproj" Id="c607f052-d7e2-478c-a0ee-d512927971a9" />
+  </Folder>
+</Solution>
