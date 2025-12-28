@@ -374,8 +374,7 @@ This project intentionally keeps a pragmatic scope, but several enhancements cou
 
 These improvements would elevate the solution from a take-home assignment to a **production-grade system**, while preserving the same architectural foundations.
 
-
-###✅Final Notes
+### ✅Final Notes
 
 This project intentionally balances engineering rigor with pragmatism, aiming to reflect how a real production system would be designed — without unnecessary complexity for a take-home assignment.
 
