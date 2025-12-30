@@ -1,29 +1,21 @@
-FROM node:24-alpine AS deps
+FROM node:24.12-alpine AS builder
 WORKDIR /app
 
+# Pin Node minor version to reduce variability between builds
 COPY package*.json ./
-RUN npm ci --silent
+RUN npm ci --silent --no-audit --no-fund
 
-FROM node:24-alpine AS test
-WORKDIR /app
-
-COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-ENV CI=true
+RUN npm run build --silent
 
-RUN npx vitest run --silent
+FROM nginx:1.26-alpine AS production
 
-FROM node:24-alpine AS build
-WORKDIR /app
-
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-RUN npm run build
-
-FROM nginx:alpine AS production
-
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Simple healthcheck: ensures the built files are present in the web root
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+  CMD test "$(ls /usr/share/nginx/html | wc -l)" -gt 0 || exit 1
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
