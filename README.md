@@ -281,7 +281,7 @@ Tests focus on **behavior**, not implementation details.
 3. **Start the services** using Docker Compose command in cmd:
 
    ```sh
-   docker-compose up --build
+   docker-compose up --build -d
    ```
    
 ### Available Services
