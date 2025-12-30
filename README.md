@@ -317,6 +317,7 @@ frontend/
 ### 🚀 Possible Improvements (Future Versions)
 
 These items represent common production concerns and were intentionally kept out of scope to preserve a pragmatic take-home assignment.
+
 In a real-world production scenario, the following improvements could be incrementally introduced to enhance security, reliability, and user experience.
 
 ---
@@ -377,7 +378,7 @@ In a real-world production scenario, the following improvements could be increme
 
 These improvements were intentionally left out of the current version to avoid over-engineering, while clearly outlining how the system could evolve into a production-grade solution.
 
-### ✅Final Notes
+### ✅ Final Notes
 
 This project intentionally balances engineering rigor with pragmatism, aiming to reflect how a real production system would be designed — without unnecessary complexity for a take-home assignment.
 
