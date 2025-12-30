@@ -279,11 +279,13 @@ Tests focus on **behavior**, not implementation details.
    Download and install Docker from [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop) and ensure it is running on your machine.
 2. **Clone the repository** and navigate to the project root. (LateralTest)
 3. **Start the services** using Docker Compose command in cmd:
+
    ```sh
    docker-compose up --build
    ```
 
-**Note:** The Dockerfiles for both the frontend and backend include validation/test stages (see `frontend/Dockerfile` and `backend/Dockerfile`). These stages are convenient for local verification, but **as a best practice** validation (tests, linters and other checks) should be executed in a dedicated CI pipeline rather than during image builds—CI improves reproducibility, speeds up image builds, and keeps concerns separate.
+> **Note:**  
+> The Dockerfiles for both the frontend and backend include validation/test stages (see `frontend/Dockerfile` and `backend/Dockerfile`). These stages are convenient for local verification, but **as a best practice** validation (tests, linters and other checks) should be executed in a dedicated CI pipeline rather than during image builds—CI improves reproducibility, speeds up image builds, and keeps concerns separate.
 
 ### Available Services
 
