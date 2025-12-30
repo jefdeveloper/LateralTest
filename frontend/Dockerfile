@@ -6,6 +6,12 @@ COPY package*.json ./
 RUN npm ci --silent --no-audit --no-fund
 
 COPY . .
+
+# Allow injecting the API base URL at build time so the bundled app points to the correct backend
+# Use empty default so the app will call relative URLs (e.g. /tasks)
+ARG VITE_API_BASE_URL=""
+ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+
 RUN npm run build --silent
 
 FROM nginx:1.26-alpine AS production

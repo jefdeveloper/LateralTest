@@ -21,6 +21,11 @@ EXPOSE 8080
 
 COPY --from=build /app/publish ./
 
+# Install Kerberos libs to satisfy libgssapi_krb5.so.2 runtime dependency
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libkrb5-3 \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN groupadd -f app || true \
     && id -u app >/dev/null 2>&1 || useradd -r -g app -s /sbin/nologin app || true \
     && chown -R app:app /app
