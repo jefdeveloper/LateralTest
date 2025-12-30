@@ -283,6 +283,8 @@ Tests focus on **behavior**, not implementation details.
    docker-compose up --build
    ```
 
+**Note:** The Dockerfiles for both the frontend and backend include validation/test stages (see `frontend/Dockerfile` and `backend/Dockerfile`). These stages are convenient for local verification, but **as a best practice** validation (tests, linters and other checks) should be executed in a dedicated CI pipeline rather than during image builds—CI improves reproducibility, speeds up image builds, and keeps concerns separate.
+
 ### Available Services
 
 | Service | URL | 

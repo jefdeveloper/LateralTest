@@ -36,3 +36,7 @@
 /backend/.vs/backend/v18
 /backend/.vs/backend.slnx/v18
 /backend/.vs
+/backend/src/Lateral.Tasks.API/bin/Release/net10.0
+/backend/src/Lateral.Tasks.Application/bin/Release/net10.0
+/backend/src/Lateral.Tasks.Domain/bin/Release/net10.0
+/backend/src/Lateral.Tasks.Infrastructure/bin/Release/net10.0
