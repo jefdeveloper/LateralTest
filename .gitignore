@@ -1,42 +1,49 @@
-﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
-################################################################################
+﻿# Compact .gitignore (keeps equivalent coverage of the original)
 
-/.vs/TorcTest/CopilotIndices/17.14.698.11175
-/.vs/TorcTest/FileContentIndex
-/.vs
-/api/BookLibraryApi/bin/Debug/net9.0
-/api/BookLibraryApi/obj
-/api/BookLibraryApi/.vs
-/backend/.vs/Lateral.Tasks/CopilotIndices/18.0.981.45449
-/backend/.vs/Lateral.Tasks.slnx/config
-/backend/.vs/Lateral.Tasks.slnx/DesignTimeBuild
-/backend/.vs/Lateral.Tasks.slnx/v18
-/backend/.vs/ProjectEvaluation
-/backend/src/Lateral.Tasks.API/bin/Debug/net10.0
-/backend/src/Lateral.Tasks.API/obj
-/backend/src/Lateral.Tasks.Application/bin/Debug/net10.0
-/backend/src/Lateral.Tasks.Application/obj
-/backend/src/Lateral.Tasks.Domain/bin/Debug/net10.0
-/backend/src/Lateral.Tasks.Domain/obj
-/backend/src/Lateral.Tasks.Infrastructure/bin/Debug/net10.0
-/backend/src/Lateral.Tasks.Infrastructure/obj
-/backend/tests/Lateral.Tasks.Api.IntegrationTests/bin
-/backend/tests/Lateral.Tasks.Api.IntegrationTests/obj
-/backend/tests/Lateral.Tasks.API.UnitTests/bin/Debug/net10.0
-/backend/tests/Lateral.Tasks.API.UnitTests/bin/Release/net10.0
-/backend/tests/Lateral.Tasks.API.UnitTests/obj
-/backend/tests/Lateral.Tasks.Application.UnitTests/bin
-/backend/tests/Lateral.Tasks.Application.UnitTests/obj
-/backend/.vs/Lateral.Tasks.slnx/copilot-chat/bf8847e0/sessions
-/backend/.vs/Lateral.Tasks.slnx/FileContentIndex
-/frontend/.vs
-/backend/.vs/backend.slnx/FileContentIndex
-/backend/.vs/slnx.sqlite
-/backend/.vs/backend/v18
-/backend/.vs/backend.slnx/v18
-/backend/.vs
-/backend/src/Lateral.Tasks.API/bin/Release/net10.0
-/backend/src/Lateral.Tasks.Application/bin/Release/net10.0
-/backend/src/Lateral.Tasks.Domain/bin/Release/net10.0
-/backend/src/Lateral.Tasks.Infrastructure/bin/Release/net10.0
+# OS
+.DS_Store
+Thumbs.db
+
+# Node / frontend
+**/node_modules/
+dist/
+build/
+.vite/
+.npm/
+.vitest/
+coverage/
+
+# .NET / Visual Studio
+.vs/
+**/bin/
+**/obj/
+**/TestResults/
+*.user
+*.suo
+*.userosscache
+*.dbmdl
+
+# NuGet / packages
+*.nupkg
+**/packages/
+
+# IDEs / editors
+.vscode/
+.idea/
+*.code-workspace
+
+# Logs / temp
+*.log
+*.tmp
+tmp/
+
+# Environment / secrets
+.env
+.env.*.local
+.env.local
+
+# Docker (optional local overrides)
+docker-compose.override.yml
+
+# Misc
+*.cache
