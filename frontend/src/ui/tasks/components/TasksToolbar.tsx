@@ -3,14 +3,11 @@ import { Box, Button, Chip, Stack, Typography } from "@mui/material";
 type Props = {
   total: number;
   selected: number;
-
   onAdd: () => void;
   onBulkStatus: () => void;
-
   disabled: boolean;
   bulkEnabled: boolean;
-
-  bulkHint?: string | null;
+  bulkHint?: string;
 };
 
 export function TasksToolbar({
@@ -35,6 +32,7 @@ export function TasksToolbar({
             variant="outlined"
             onClick={onBulkStatus}
             disabled={disabled || !bulkEnabled}
+            aria-label="Update status (bulk)"
           >
             Update status (bulk)
           </Button>
@@ -43,6 +41,7 @@ export function TasksToolbar({
             variant="contained"
             onClick={onAdd}
             disabled={disabled}
+            aria-label="Add task"
           >
             Add task
           </Button>

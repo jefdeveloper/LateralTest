@@ -1,14 +1,18 @@
 import {
+  Box,
   Checkbox,
   Chip,
   Link,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   Typography,
+  Paper,
 } from "@mui/material";
+
 import type { Task } from "../../../domain/tasks/task";
 
 type Props = {
@@ -18,10 +22,15 @@ type Props = {
   onOpenSingle: (task: Task) => void;
 };
 
-export function TasksList({ tasks, selected, onToggleSelect, onOpenSingle }: Props) {
-  const safeTasks = tasks ?? [];
 
-  if (safeTasks.length === 0) {
+const statusChipMap: Record<Task["status"], { color: "error" | "info" | "success"; label: string }> = {
+  Pending: { color: "error", label: "Pending" },
+  InProgress: { color: "info", label: "In progress" },
+  Finished: { color: "success", label: "Finished" },
+};
+
+export function TasksList({ tasks, selected, onToggleSelect, onOpenSingle }: Props) {
+  if (!tasks || tasks.length === 0) {
     return (
       <Typography sx={{ mt: 3 }} color="text.secondary">
         No tasks found.
@@ -29,51 +38,91 @@ export function TasksList({ tasks, selected, onToggleSelect, onOpenSingle }: Pro
     );
   }
 
+  const enabledTasks = tasks.filter(t => t.status !== "Finished");
+  const allEnabledSelected = enabledTasks.length > 0 && enabledTasks.every(t => selected.has(t.id));
+  const someEnabledSelected = enabledTasks.some(t => selected.has(t.id));
+
+  const handleHeaderCheckbox = (checked: boolean) => {
+    enabledTasks.forEach(t => {
+      if (checked && !selected.has(t.id)) onToggleSelect(t.id);
+      if (!checked && selected.has(t.id)) onToggleSelect(t.id);
+    });
+  };
+
   return (
-    <List sx={{ mt: 2 }}>
-      {safeTasks.map((task) => {
-        const locked = task.status === "Finished";
-
-        return (
-          <ListItem key={task.id} divider>
-            <ListItemIcon sx={{ minWidth: 42 }} onClick={(e) => e.stopPropagation()}>
+    <TableContainer component={Paper} variant="outlined" sx={{ mt: 2, overflow: "hidden" }}>
+      <Table size="small" aria-label="Tasks list" role="table">
+        <TableHead>
+          <TableRow>
+            <TableCell padding="checkbox" sx={{ width: 48 }}>
               <Checkbox
-                checked={selected.has(task.id)}
-                onChange={() => onToggleSelect(task.id)}
-                disabled={locked}
+                indeterminate={someEnabledSelected && !allEnabledSelected}
+                checked={allEnabledSelected}
+                onChange={e => handleHeaderCheckbox(e.target.checked)}
+                slotProps={{ input: { 'aria-label': 'select all enabled tasks' } }}
               />
-            </ListItemIcon>
+            </TableCell>
+            <TableCell sx={{ fontWeight: 600 }}>Task</TableCell>
+            <TableCell sx={{ fontWeight: 600, width: 160 }}>Status</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {tasks.map((task) => {
+            const locked = task.status === "Finished";
+            const chip = statusChipMap[task.status];
+            return (
+              <TableRow
+                key={task.id}
+                hover
+                role="row"
+                aria-label={`task-row-${task.id}`}
+                sx={{ "&:last-child td, &:last-child th": { borderBottom: 0 } }}
+              >
+                <TableCell padding="checkbox">
+                  <Checkbox
+                    checked={selected.has(task.id)}
+                    onChange={() => onToggleSelect(task.id)}
+                    disabled={locked}
+                    slotProps={{ input: { 'aria-label': `select ${task.description}` } }}
+                  />
+                </TableCell>
 
-            <ListItemText
-              primary={
-                <Link
-                  component="button"
-                  underline="hover"
-                  onClick={() => {
-                    if (locked) return;
-                    onOpenSingle(task);
-                  }}
-                  sx={{
-                    textAlign: "left",
-                    cursor: locked ? "not-allowed" : "pointer",
-                    opacity: locked ? 0.6 : 1,
-                    pointerEvents: locked ? "none" : "auto",
-                  }}
-                  aria-disabled={locked}
-                >
-                  {task.description}
-                </Link>
-              }
-              secondary={
-                <Stack direction="row" spacing={1} sx={{ mt: 0.5 }}>
-                  <Chip size="small" label={task.status} />
-                  {locked && <Chip size="small" variant="outlined" label="Locked" />}
-                </Stack>
-              }
-            />
-          </ListItem>
-        );
-      })}
-    </List>
+                <TableCell sx={{ verticalAlign: 'middle' }}>
+                  {locked ? (
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontWeight: 500,
+                        lineHeight: '32px',
+                        textDecoration: 'line-through',
+                        color: 'text.disabled',
+                        cursor: 'not-allowed',
+                        opacity: 0.7,
+                      }}
+                    >
+                      {task.description}
+                    </Typography>
+                  ) : (
+                    <Link
+                      component="button"
+                      underline="hover"
+                      onClick={() => onOpenSingle(task)}
+                      sx={{ fontWeight: 500, fontSize: 14, textAlign: "left", lineHeight: '32px' }}
+                    >
+                      {task.description}
+                    </Link>
+                  )}
+                </TableCell>
+
+                <TableCell sx={{ verticalAlign: 'middle' }}>
+                  <Chip size="small" color={chip.color} label={chip.label} />
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+      <Box sx={{ borderTop: "1px solid", borderColor: "divider" }} />
+    </TableContainer>
   );
 }

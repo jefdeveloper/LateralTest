@@ -1,9 +1,6 @@
 using Lateral.Tasks.API.Composition;
 using Lateral.Tasks.API.Endpoints;
-using Lateral.Tasks.API.Middlewares;
-using Lateral.Tasks.Infrastructure.Context;
 using Lateral.Tasks.Infrastructure.DependencyInjection;
-using Lateral.Tasks.Infrastructure.Seed;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -18,28 +15,11 @@ builder.Services
     .AddEndpointsApiExplorer()
     .AddOpenApi();
 
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(policy =>
-        policy.WithOrigins("http://localhost:5173")
-              .AllowAnyHeader()
-              .AllowAnyMethod());
-});
-
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    using var scope = app.Services.CreateScope();
+await app.MigrateAndSeedAsync();
 
-    var db = scope.ServiceProvider.GetRequiredService<TasksDbContext>();
-    db.Database.Migrate();
-
-    var seeder = scope.ServiceProvider.GetRequiredService<TasksDbSeeder>();
-    await seeder.SeedAsync();
-}
-
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddlewares();
 
 app.UseCors();
 app.MapOpenApi();

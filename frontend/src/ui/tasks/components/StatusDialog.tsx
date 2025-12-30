@@ -1,14 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
 import {
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   Stack,
   Typography,
 } from "@mui/material";
@@ -47,56 +42,45 @@ export function StatusDialog({
   onClose,
   onConfirm,
 }: Props) {
-  const allowed = useMemo(() => getNextStatuses(currentStatus), [currentStatus]);
+  const allowed = getNextStatuses(currentStatus);
   const locked = allowed.length === 0;
+  const nextStatus: TaskStatus | undefined = allowed[0];
+  const canConfirm = !busy && !locked && !!nextStatus;
 
-  const [value, setValue] = useState<TaskStatus>(currentStatus);
-
-  useEffect(() => {
-    setValue(allowed[0] ?? currentStatus);
-  }, [open, currentStatus, allowed]);
-
-  const canConfirm = !busy && !locked && value === allowed[0];
-
+  // For accessibility, describe the main message
+  const descId = "status-dialog-desc";
   return (
-    <Dialog open={open} onClose={busy ? undefined : onClose} fullWidth maxWidth="xs">
-      <DialogTitle>{title}</DialogTitle>
+    <Dialog
+      open={open}
+      onClose={busy ? undefined : onClose}
+      fullWidth
+      maxWidth="xs"
+      aria-labelledby="status-dialog-title"
+      aria-describedby={descId}
+    >
+      <DialogTitle id="status-dialog-title">{title}</DialogTitle>
 
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>
           {subtitle ? <Typography>{subtitle}</Typography> : null}
 
           {locked ? (
-            <Typography color="text.secondary">
+            <Typography color="text.secondary" id={descId}>
               This task is locked (Finished) and cannot be updated.
             </Typography>
           ) : (
-            <FormControl fullWidth size="small">
-              <InputLabel id="status-label">Status</InputLabel>
-
-              <Select
-                labelId="status-label"
-                id="status-select"
-                label="Status"
-                value={value}
-                onChange={(e) => setValue(e.target.value as TaskStatus)}
-                disabled={busy}
-              >
-                {allowed.map((s) => (
-                  <MenuItem key={s} value={s}>
-                    {statusLabel(s)}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-
-          {!locked ? (
-            <Typography variant="caption" color="text.secondary">
-              Allowed transition: <b>{statusLabel(currentStatus)}</b> →{" "}
-              <b>{statusLabel(allowed[0])}</b>
+            <Typography id={descId}>
+              Do you want to move the task(s) to the next status?
+              <br />
+              <b>{statusLabel(currentStatus)}</b>
+              {nextStatus ? (
+                <>
+                  {" "}
+                  → <b>{statusLabel(nextStatus)}</b>
+                </>
+              ) : null}
             </Typography>
-          ) : null}
+          )}
         </Stack>
       </DialogContent>
 
@@ -107,7 +91,7 @@ export function StatusDialog({
 
         <Button
           variant="contained"
-          onClick={() => onConfirm(value)}
+          onClick={() => nextStatus && onConfirm(nextStatus)}
           disabled={!canConfirm}
         >
           Confirm

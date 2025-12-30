@@ -1,6 +1,6 @@
 # 📋 Tasks Management – Lateral Group Technical Assessment Project
 
-This project is a **Lateral Group Tasks Management application**, built as a Technical Assessment to demonstrate clean architecture, pragmatic engineering decisions and production-ready patterns — without unnecessary over-engineering.
+This project is a **Lateral Group Tasks Management application**, built as a Technical Assessment to demonstrate clean architecture, pragmatic engineering decisions, and production-ready patterns — without unnecessary over-engineering.
 
 The solution prioritizes **clarity, maintainability, and correctness**, applying modern backend and frontend practices.
 
@@ -54,7 +54,7 @@ The backend follows **Clean Architecture principles**, enforcing clear boundarie
 - Entity Framework Core
 - PostgreSQL implementation
 - Repository implementations
-- Database migrations
+- Database migrations (applied automatically on startup)
 
 #### API
 - ASP.NET Core Minimal APIs
@@ -109,6 +109,8 @@ A centralized HTTP mapper converts results into proper HTTP responses:
 
 The API is documented using **OpenAPI** and exposed via **Scalar** (modern Swagger alternative).
 
+All request and response schemas are fully described and versioned.d
+
 Once the application is running, access:
 
 https://localhost:5001/scalar
@@ -137,6 +139,7 @@ frontend/
 	├── hooks
  ├── domain
  ├── services
+ ├── tests
  ```
  
 ### Folder Responsibilities
@@ -197,6 +200,16 @@ Contains **infrastructure code** for external communication.
   - Translate backend errors into user-friendly messages
   - Return typed data to hooks
 - **Examples:** `TasksService`, `httpError`
+
+---
+
+#### `tests/`
+- **Purpose:** - **Purpose:** Provides consistent Material-UI theming and baseline styles for component tests.
+- **Responsibilities:**
+  - Applies a shared MUI theme and disables button ripple effects.
+  - Injects CssBaseline for global style normalization.
+  - Supports optional custom wrappers for extra providers.
+- **Example:** `TestUtils`
 
 ---
 
@@ -262,15 +275,15 @@ Tests focus on **behavior**, not implementation details.
 
 ## 🐳 Running with Docker
 
-### Prerequisites
-- Docker
-- Docker Compose
+### How to run
 
-### Start the Application
-
-```sh
-docker-compose up --build
-```
+1. **Install Docker**  
+   Download and install Docker from [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop) and ensure it is running on your machine.
+2. **Clone the repository** and navigate to the project root. (LateralTest)
+3. **Start the services** using Docker Compose command in cmd:
+   ```sh
+   docker-compose up --build
+   ```
 
 ### Available Services
 
@@ -305,74 +318,68 @@ frontend/
 
 ### 🚀 Possible Improvements (Future Versions)
 
-This project intentionally keeps a pragmatic scope, but several enhancements could be introduced in future versions to improve **security, scalability, resilience, and user experience**.
+These items represent common production concerns and are intentionally not part of the take-home scope.
+
+This project intentionally keeps a pragmatic scope suitable for a take-home assignment.  
+In a real-world production scenario, the following improvements could be incrementally introduced to enhance security, reliability, and user experience.
+
+---
 
 #### 🔐 API Security & Reliability
-- **Rate limiting** (per IP / per user) to protect against abuse and brute-force attacks
-- **Idempotency keys** for write operations (especially `POST` and `PUT`) to prevent duplicated processing in retry scenarios
-- **Request correlation IDs** propagated across logs and responses
-- **Improved validation error details** with standardized error codes per rule
-- **Global exception handling** with structured logging
-- **API versioning strategy** (`/v1`, `/v2`) to support backward compatibility
-- **CORS hardening** and stricter allowed origins
-- **HTTPS enforcement and HSTS**
-- **Security headers** (Content Security Policy, X-Content-Type-Options, etc.)
-- **Audit logging** for sensitive operations (status updates, bulk actions)
+- **Rate limiting** to protect against abuse
+- **Request correlation IDs** for end-to-end tracing
+- **API versioning strategy** to preserve backward compatibility
+- **CORS hardening** and standard **security headers**
+- **HTTPS enforcement** and **HSTS**
+- **Secure secrets management** using environment-based configuration
+- **Input validation and request size limits**
 
 ---
 
 #### 🔑 Authentication & Authorization
 - **Authentication layer** (JWT or OAuth2 / OpenID Connect)
-- **Role-based authorization** (e.g., Admin, User, Read-only)
-- **Per-action authorization rules** (who can bulk update, finish tasks, etc.)
+- **Role-based authorization**
+- **Fine-grained access rules** for sensitive operations
 - **Token refresh and revocation strategy**
+
+> Authentication and authorization were intentionally excluded to keep the focus on core domain logic.
 
 ---
 
 #### 🧠 Domain & Backend Enhancements
-- **Soft delete** instead of hard delete
 - **Audit trail** for task status changes
-- **Optimistic concurrency control** (row versioning)
-- **Event-driven notifications** on task changes
-- **Background jobs** for async processing
-- **Database indexes and performance tuning**
-- **Outbox pattern** for reliable event publishing
+- **Optimistic concurrency control** to prevent lost updates
+- **Background processing** for non-blocking operations
+- **Stronger database constraints** to enforce data integrity
 
 ---
 
 #### 🖥️ Frontend Improvements
-- **Optimistic UI updates**
-- **Global toast / notification system**
-- **Retry UI for transient failures**
-- **Better empty / error states**
-- **Accessibility (ARIA, keyboard navigation)**
-- **Internationalization (i18n)**
-- **Improved loading skeletons**
-- **Client-side caching strategies**
+- **Filtering and searching** by task name and status
+- **Optimistic UI updates** for better perceived performance
+- **Global notifications and error handling**
+- **Improved empty, loading, and error states**
+- **Accessibility (a11y) improvements**
 
 ---
 
 #### 🧪 Testing & Quality
+- **End-to-end tests** for critical user flows
 - **Contract tests** between frontend and backend
-- **End-to-end tests** (Playwright / Cypress)
-- **Mutation testing** for critical business rules
 - **Static analysis and security scanning**
-- **Performance and load testing**
+- **Performance testing** for core endpoints
 
 ---
 
-#### 🚀 DevOps & Delivery
+#### 🚀 DevOps & Observability
 - **CI/CD pipelines**
-- **Automated database migrations**
 - **Environment-based configuration**
 - **Health checks and readiness probes**
-- **Centralized logging and metrics**
-- **Feature flags**
-- **Blue/green or canary deployments**
+- **Centralized logging, metrics, and tracing**
 
 ---
 
-These improvements would elevate the solution from a take-home assignment to a **production-grade system**, while preserving the same architectural foundations.
+These improvements were intentionally left out of the current version to avoid over-engineering, while clearly outlining how the system could evolve into a production-grade solution.
 
 ### ✅Final Notes
 

@@ -9,13 +9,16 @@ namespace Lateral.Tasks.Infrastructure.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<TaskItem>(b =>
+            modelBuilder.Entity<TaskItem>(task =>
             {
-                b.ToTable("Tasks");
-                b.HasKey(x => x.Id);
-                b.Property(x => x.Description).HasMaxLength(30).IsRequired();
-                b.Property(x => x.Status).IsRequired();
-                b.Property(x => x.CreatedAtUtc).IsRequired();
+                task.ToTable("Tasks");
+                task.HasKey(x => x.Id);
+                task.Property(x => x.Description).HasMaxLength(30).IsRequired();
+                task.Property(x => x.Status)
+                    .HasConversion<string>()
+                    .HasMaxLength(20)
+                    .IsRequired();
+                task.Property(x => x.CreatedAtUtc).IsRequired();
             });
         }
     }

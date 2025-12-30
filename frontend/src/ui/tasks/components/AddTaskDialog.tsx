@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Dialog,
@@ -19,23 +19,59 @@ const MAX_DESC = 30;
 
 export function AddTaskDialog({ open, busy, onClose, onConfirm }: Props) {
   const [desc, setDesc] = useState("");
+  const [touched, setTouched] = useState(false);
 
-  const trimmed = useMemo(() => desc.trim(), [desc]);
+  const trimmed = desc.trim();
   const isEmpty = trimmed.length === 0;
   const isTooLong = trimmed.length > MAX_DESC;
 
   useEffect(() => {
-    if (open) setDesc("");
+    if (open) {
+      setDesc("");
+      setTouched(false);
+    }
   }, [open]);
 
+
   function confirm() {
+    setTouched(true);
+    if (isEmpty || isTooLong) return;
     onConfirm(trimmed);
     onClose();
   }
 
+  // Prevent typing above MAX_DESC
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value;
+    if (value.length <= MAX_DESC) {
+      setDesc(value);
+    } else {
+      setDesc(value.slice(0, MAX_DESC));
+    }
+  }
+
+  // Auto-trim on blur
+  function handleBlur() {
+    setDesc((d) => d.trim());
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key !== "Enter") return;
+    if (busy) return;
+
+    e.preventDefault();
+    confirm();
+  }
+
   return (
-    <Dialog open={open} onClose={busy ? undefined : onClose} fullWidth maxWidth="xs">
-      <DialogTitle>Add Task</DialogTitle>
+    <Dialog
+      open={open}
+      onClose={busy ? undefined : onClose}
+      fullWidth
+      maxWidth="xs"
+      aria-labelledby="add-task-title"
+    >
+      <DialogTitle id="add-task-title">Add Task</DialogTitle>
 
       <DialogContent>
         <TextField
@@ -43,24 +79,27 @@ export function AddTaskDialog({ open, busy, onClose, onConfirm }: Props) {
           margin="dense"
           label="Description"
           value={desc}
-          onChange={(e) => setDesc(e.target.value)}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
           fullWidth
           size="small"
-          inputProps={{ maxLength: MAX_DESC }}
-          error={isEmpty || isTooLong}
+          slotProps={{
+            input: { 'aria-describedby': 'desc-helper' },
+            formHelperText: { id: 'desc-helper' }
+          }}
+          error={(touched && isEmpty) || isTooLong}
           helperText={
-            isEmpty
-              ? "Description is required."
-              : isTooLong
-              ? "Maximum of 30 characters."
-              : `${trimmed.length}/${MAX_DESC}`
+            ((isTooLong && `Maximum of ${MAX_DESC} characters. `) || (touched && isEmpty && "Description is required. ") || "") + `${trimmed.length}/${MAX_DESC}`
           }
+          aria-label="Task description"
+          id="desc-input"
         />
       </DialogContent>
 
       <DialogActions>
         <Button onClick={onClose} disabled={busy}>
-          Cancelar
+          Cancel
         </Button>
         <Button
           variant="contained"

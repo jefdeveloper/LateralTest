@@ -1,7 +1,17 @@
+
 import { describe, expect, test, vi } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { StatusDialog } from "./StatusDialog";
+
+const user = userEvent.setup();
+
+function getConfirm(dialog: HTMLElement) {
+  return within(dialog).getByRole("button", { name: /confirm/i });
+}
+function getCancel(dialog: HTMLElement) {
+  return within(dialog).getByRole("button", { name: /cancel/i });
+}
 
 function renderDialog(
   override?: Partial<React.ComponentProps<typeof StatusDialog>>
@@ -30,89 +40,58 @@ describe("StatusDialog", () => {
     expect(within(dialog).getByText("Hello")).toBeInTheDocument();
   });
 
-  test("Pending: shows only next status (InProgress) and confirm calls onConfirm(InProgress)", async () => {
+  test("Pending: shows next status message and confirm calls onConfirm(InProgress)", async () => {
     const props = renderDialog({ currentStatus: "Pending" });
     const dialog = await screen.findByRole("dialog");
 
-    const combo = within(dialog).getByRole("combobox", { name: /status/i });
-    expect(combo).toBeInTheDocument();
-
-    const confirm = within(dialog).getByRole("button", { name: /confirm/i });
-    expect(confirm).toBeEnabled();
-
-    expect(within(dialog).getByText(/Allowed transition:/i)).toBeInTheDocument();
-
+    expect(within(dialog).getByText(/Do you want to move the task\(s\) to the next status\?/i)).toBeInTheDocument();
     expect(within(dialog).getByText(/Pending/i)).toBeInTheDocument();
-    expect(within(dialog).getAllByText(/In progress/i).length).toBeGreaterThanOrEqual(1);
+    expect(within(dialog).getByText(/In progress/i)).toBeInTheDocument();
 
-    const user = userEvent.setup();
-    await user.click(combo);
-
-    expect(await screen.findByRole("option", { name: /In progress/i })).toBeInTheDocument();
-    expect(screen.queryByRole("option", { name: /^Pending$/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("option", { name: /^Finished$/i })).not.toBeInTheDocument();
-
+    const confirm = getConfirm(dialog);
+    expect(confirm).toBeEnabled();
     await user.click(confirm);
 
     expect(props.onConfirm).toHaveBeenCalledTimes(1);
     expect(props.onConfirm).toHaveBeenCalledWith("InProgress");
   });
 
-  test("InProgress: shows only next status (Finished) and confirm calls onConfirm(Finished)", async () => {
+  test("InProgress: shows next status message and confirm calls onConfirm(Finished)", async () => {
     const props = renderDialog({ currentStatus: "InProgress" });
     const dialog = await screen.findByRole("dialog");
 
-    const combo = within(dialog).getByRole("combobox", { name: /status/i });
-    expect(combo).toBeInTheDocument();
+    expect(within(dialog).getByText(/Do you want to move the task\(s\) to the next status\?/i)).toBeInTheDocument();
+    expect(within(dialog).getByText(/In progress/i)).toBeInTheDocument();
+    expect(within(dialog).getByText(/Finished/i)).toBeInTheDocument();
 
-    const confirm = within(dialog).getByRole("button", { name: /confirm/i });
+    const confirm = getConfirm(dialog);
     expect(confirm).toBeEnabled();
-
-    expect(within(dialog).getByText(/Allowed transition:/i)).toBeInTheDocument();
-    expect(within(dialog).getAllByText(/Finished/i).length).toBeGreaterThanOrEqual(1);
-
-    const user = userEvent.setup();
-    await user.click(combo);
-
-    expect(await screen.findByRole("option", { name: /^Finished$/i })).toBeInTheDocument();
-    expect(screen.queryByRole("option", { name: /In progress/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("option", { name: /Pending/i })).not.toBeInTheDocument();
-
     await user.click(confirm);
 
     expect(props.onConfirm).toHaveBeenCalledTimes(1);
     expect(props.onConfirm).toHaveBeenCalledWith("Finished");
   });
 
-  test("Finished: locked state hides Select, shows locked message, confirm disabled", async () => {
+  test("Finished: locked state shows locked message, confirm disabled", async () => {
     renderDialog({ currentStatus: "Finished" });
     const dialog = await screen.findByRole("dialog");
-
-    expect(within(dialog).queryByRole("combobox", { name: /status/i })).not.toBeInTheDocument();
 
     expect(
       within(dialog).getByText(/This task is locked \(Finished\) and cannot be updated\./i)
     ).toBeInTheDocument();
 
-    const confirm = within(dialog).getByRole("button", { name: /confirm/i });
+    const confirm = getConfirm(dialog);
     expect(confirm).toBeDisabled();
-
-    expect(within(dialog).queryByText(/Allowed transition:/i)).not.toBeInTheDocument();
   });
 
-  test("busy: Cancel disabled, Confirm disabled, Select disabled", async () => {
+  test("busy: Cancel disabled, Confirm disabled", async () => {
     const props = renderDialog({ busy: true, currentStatus: "Pending" });
     const dialog = await screen.findByRole("dialog");
 
-    const cancel = within(dialog).getByRole("button", { name: /cancel/i });
-    const confirm = within(dialog).getByRole("button", { name: /confirm/i });
-
+    const cancel = getCancel(dialog);
+    const confirm = getConfirm(dialog);
     expect(cancel).toBeDisabled();
     expect(confirm).toBeDisabled();
-
-    const combo = within(dialog).getByRole("combobox", { name: /status/i });
-
-    expect(combo).toHaveAttribute("aria-disabled", "true");
 
     expect(props.onClose).not.toHaveBeenCalled();
     expect(props.onConfirm).not.toHaveBeenCalled();
@@ -135,9 +114,7 @@ describe("StatusDialog", () => {
     );
 
     let dialog = await screen.findByRole("dialog");
-    let combo = within(dialog).getByRole("combobox", { name: /status/i });
-
-    expect(combo).toHaveTextContent(/In progress/i);
+    expect(within(dialog).getByText(/In progress/i)).toBeInTheDocument();
 
     rerender(
       <StatusDialog
@@ -152,14 +129,10 @@ describe("StatusDialog", () => {
     );
 
     dialog = await screen.findByRole("dialog");
-    combo = within(dialog).getByRole("combobox", { name: /status/i });
+    expect(within(dialog).getByText(/^Finished$/i)).toBeInTheDocument();
 
-    expect(combo).toHaveTextContent(/^Finished$/i);
-
-    const confirm = within(dialog).getByRole("button", { name: /confirm/i });
+    const confirm = getConfirm(dialog);
     expect(confirm).toBeEnabled();
-
-    const user = userEvent.setup();
     await user.click(confirm);
 
     expect(onConfirm).toHaveBeenCalledWith("Finished");

@@ -14,6 +14,7 @@ function makeTextResponse(status: number, text: string) {
   return new Response(text, { status, headers: { "content-type": "text/plain; charset=utf-8" } });
 }
 
+
 describe("TasksService", () => {
   const fetchMock = vi.fn();
 
@@ -23,7 +24,7 @@ describe("TasksService", () => {
   });
 
   afterEach(() => {
-    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
   });
 
   test("list calls GET /tasks with paging and returns paged result", async () => {
@@ -95,34 +96,19 @@ describe("TasksService", () => {
     expect(result.updated).toBe(2);
   });
 
-  test("throws user friendly error on ProblemDetails json", async () => {
+  test.each([
+    ["throws user friendly error on ProblemDetails json", makeJsonResponse(409, { title: "Task.InvalidTransition", detail: "Status cannot transition." }), (svc: TasksService) => svc.updateStatus("1", "Finished"), /Status cannot transition/i],
+    ["throws user friendly error on ValidationProblemDetails json", makeJsonResponse(400, { title: "Validation Failed", errors: { Status: ["Invalid status value."] } }), (svc: TasksService) => svc.updateStatus("1", "X" as any), /Invalid status value/i],
+    ["throws error on plain text body", makeTextResponse(500, "boom"), (svc: TasksService) => svc.list(1, 10), /boom/i],
+  ])("%s", async (_desc, response, call, expected) => {
     const svc = new TasksService("https://localhost:5001");
-
-    fetchMock.mockResolvedValueOnce(
-      makeJsonResponse(409, { title: "Task.InvalidTransition", detail: "Status cannot transition." })
-    );
-
-    await expect(svc.updateStatus("1", "Finished")).rejects.toThrow(/Status cannot transition/i);
+    fetchMock.mockResolvedValueOnce(response);
+    await expect(call(svc)).rejects.toThrow(expected);
   });
 
-  test("throws user friendly error on ValidationProblemDetails json", async () => {
+  test("propagates network error", async () => {
     const svc = new TasksService("https://localhost:5001");
-
-    fetchMock.mockResolvedValueOnce(
-      makeJsonResponse(400, {
-        title: "Validation Failed",
-        errors: { Status: ["Invalid status value."] },
-      })
-    );
-
-    await expect(svc.updateStatus("1", "X" as any)).rejects.toThrow(/Invalid status value/i);
-  });
-
-  test("throws error on plain text body", async () => {
-    const svc = new TasksService("https://localhost:5001");
-
-    fetchMock.mockResolvedValueOnce(makeTextResponse(500, "boom"));
-
-    await expect(svc.list(1, 10)).rejects.toThrow(/boom/i);
+    fetchMock.mockRejectedValueOnce(new Error("Network down"));
+    await expect(svc.list(1, 10)).rejects.toThrow(/Network down/);
   });
 });

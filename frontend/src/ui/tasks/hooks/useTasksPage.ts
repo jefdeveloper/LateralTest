@@ -38,6 +38,26 @@ function transitionErrorMessage(current: Status, next: Status) {
   return `Invalid status transition: ${statusLabel(current)} → ${statusLabel(next)}.`;
 }
 
+/**
+ * Detecta erro típico de rede/indisponibilidade (browser fetch, Vite proxy, CORS, etc.)
+ * Objetivo: quando for esse caso => mostrar ApiUnavailable no TasksPage.
+ */
+function isNetworkError(e: unknown) {
+  const msg = String((e as any)?.message ?? e ?? "").toLowerCase();
+
+  return (
+    msg.includes("failed to fetch") ||
+    msg.includes("networkerror") ||
+    msg.includes("load failed") ||
+    msg.includes("err_network") ||
+    msg.includes("network request failed") ||
+    msg.includes("econnrefused") ||
+    msg.includes("ecconnrefused") ||
+    msg.includes("connect") && msg.includes("refused") ||
+    msg.includes("fetch") && msg.includes("failed")
+  );
+}
+
 export function useTasksPage(service: ITasksService) {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -68,8 +88,12 @@ export function useTasksPage(service: ITasksService) {
         setPaged(data);
         setSelected(new Set());
       } catch (e: any) {
-        setApiUnavailable(true);
-        setError(e?.message ?? "API unavailable");
+        const message = e?.message ?? "API unavailable";
+
+        // ✅ aqui é o ponto principal da correção
+        if (isNetworkError(e)) setApiUnavailable(true);
+
+        setError(message);
       } finally {
         setLoading(false);
       }
@@ -79,6 +103,7 @@ export function useTasksPage(service: ITasksService) {
 
   useEffect(() => {
     void load(paged.page, paged.pageSize);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const retry = useCallback(() => {
@@ -103,20 +128,18 @@ export function useTasksPage(service: ITasksService) {
     [load]
   );
 
-  const toggleSelect = useCallback(
-    (id: string) => {
-      setSelected((prev) => {
-        const next = new Set(prev);
-        if (next.has(id)) next.delete(id);
-        else next.add(id);
-        return next;
-      });
-    },
-    [setSelected]
-  );
+  const toggleSelect = useCallback((id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
 
   const openAdd = useCallback(() => setDialog({ kind: "add" }), []);
 
+  // mantém regra: não abre single se Finished
   const openSingle = useCallback((task: Task) => {
     if (task.status === "Finished") return;
     setDialog({ kind: "single", task });
@@ -207,12 +230,7 @@ export function useTasksPage(service: ITasksService) {
         return;
       }
 
-      if (!canBulkUpdate) {
-        setError("Bulk update not allowed for current selection.");
-        return;
-      }
-
-      if (!bulkStatus) {
+      if (!canBulkUpdate || !bulkStatus) {
         setError("Bulk update not allowed for current selection.");
         return;
       }
@@ -240,34 +258,28 @@ export function useTasksPage(service: ITasksService) {
 
   return useMemo(
     () => ({
-      // api state
       loading,
       busy,
       apiUnavailable,
       error,
 
-      // paged data
       tasks,
       total: paged.total,
       page: paged.page,
       pageSize: paged.pageSize,
 
-      // selection
       selected,
       selectedCount,
 
-      // dialogs
       dialog,
       singleTask,
       bulkStatus,
       canBulkUpdate,
       bulkStatusLabel,
 
-      // pagination controls
       setPage,
       setPageSize,
 
-      // ui actions
       retry,
       toggleSelect,
       openAdd,
@@ -275,7 +287,6 @@ export function useTasksPage(service: ITasksService) {
       openBulk,
       closeDialog,
 
-      // commands
       addTask,
       updateSingleStatus,
       updateBulkStatus,

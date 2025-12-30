@@ -1,7 +1,8 @@
 import { Alert, Button, Paper, Stack, Typography, Box } from "@mui/material";
 
+
 type Props = {
-  message?: string | null;
+  message?: string;
   apiBase: string;
   onRetry: () => void;
 };
@@ -21,7 +22,7 @@ export function ApiUnavailable({ message, apiBase, onRetry }: Props) {
             <strong>API URL:</strong> {apiBase}
           </Typography>
 
-          {message && (
+          {!!message && (
             <Typography
               variant="body2"
               component="div"
@@ -33,7 +34,7 @@ export function ApiUnavailable({ message, apiBase, onRetry }: Props) {
           )}
         </Box>
 
-        <Button variant="contained" onClick={onRetry}>
+        <Button variant="contained" onClick={onRetry} data-testid="retry-btn">
           Try again
         </Button>
       </Stack>

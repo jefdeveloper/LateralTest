@@ -3,7 +3,7 @@ using Lateral.Tasks.API.Filters.Extensions;
 using Lateral.Tasks.Application.Common;
 using Lateral.Tasks.Application.Interfaces.UseCases;
 using Lateral.Tasks.Application.Requests.Tasks;
-using Lateral.Tasks.Domain.Entities;
+using Lateral.Tasks.Application.Responses.Tasks;
 
 namespace Lateral.Tasks.API.Endpoints
 {
@@ -26,7 +26,7 @@ namespace Lateral.Tasks.API.Endpoints
             .WithName("Tasks_ListPaged")
             .WithSummary("List tasks (paged)")
             .WithDescription("Returns a paginated list of tasks.")
-            .Produces<PagedResult<TaskItem>>(StatusCodes.Status200OK)
+            .Produces<PagedResult<TaskItemDto>>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
             // POST /tasks
@@ -35,13 +35,13 @@ namespace Lateral.Tasks.API.Endpoints
                 var result = await taskUseCase.CreateAsync(request, ct);
 
                 return result.IsSuccess
-                    ? Results.Created($"/tasks/{result.Value!.Id}", result.Value)
-                    : result.ToHttp();
+                          ? Results.Created($"/tasks/{result.Value!.Id}", result.Value)
+                          : result.ToHttp();
             })
             .WithName("Tasks_Create")
             .WithSummary("Create a task")
             .WithDescription("Creates a new task. The status is always set to Pending.")
-            .Produces<TaskItem>(StatusCodes.Status201Created)
+            .Produces<TaskItemDto>(StatusCodes.Status201Created)
             .ProducesValidationProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .Validate<CreateTaskRequest>();
@@ -56,7 +56,7 @@ namespace Lateral.Tasks.API.Endpoints
             .WithName("Tasks_UpdateStatus")
             .WithSummary("Update a task status")
             .WithDescription("Updates the status of a task. Finished tasks cannot be updated.")
-            .Produces<TaskItem>(StatusCodes.Status200OK)
+            .Produces<TaskItemDto>(StatusCodes.Status200OK)
             .ProducesValidationProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)   // Task.NotFound
             .ProducesProblem(StatusCodes.Status403Forbidden)  // Task.Locked

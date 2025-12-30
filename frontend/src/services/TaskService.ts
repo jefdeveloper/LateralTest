@@ -1,9 +1,13 @@
+
 import type { ITasksService } from "../domain/tasks/ITasksService";
 import type { Task } from "../domain/tasks/task";
 import type { PagedResult } from "../domain/common/PagedResult";
 import { toUserFriendlyError } from "./httpError";
 
+
 type BulkUpdateResponse = { updated: number };
+
+const JSON_HEADERS = { "Content-Type": "application/json", Accept: "application/json" };
 
 export class TasksService implements ITasksService {
   private readonly baseUrl: string;
@@ -12,60 +16,57 @@ export class TasksService implements ITasksService {
     this.baseUrl = (baseUrl ?? import.meta.env.VITE_API_BASE_URL ?? "https://localhost:5001").replace(/\/$/, "");
   }
 
-  private url(path: string) {
+
+  private url(path: string): string {
     return `${this.baseUrl}${path}`;
   }
 
-  private async ensureOk(res: Response) {
-    if (res.ok) return;
+
+  private async ensureOk(res: Response): Promise<Response> {
+    if (res.ok) return res;
     throw await toUserFriendlyError(res);
   }
 
+
   private async getJson<T>(res: Response): Promise<T> {
-    return (await res.json()) as T;
+    return res.json() as Promise<T>;
   }
+
 
   async list(page: number, pageSize: number): Promise<PagedResult<Task>> {
     const res = await fetch(this.url(`/tasks?page=${page}&pageSize=${pageSize}`), {
       method: "GET",
       headers: { Accept: "application/json" },
     });
-
-    await this.ensureOk(res);
-    return await this.getJson<PagedResult<Task>>(res);
+    return this.getJson<PagedResult<Task>>(await this.ensureOk(res));
   }
+
 
   async create(description: string): Promise<Task> {
     const res = await fetch(this.url(`/tasks`), {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      headers: JSON_HEADERS,
       body: JSON.stringify({ description }),
     });
-
-    await this.ensureOk(res);
-
-    return await this.getJson<Task>(res);
+    return this.getJson<Task>(await this.ensureOk(res));
   }
+
 
   async updateStatus(id: string, status: Task["status"]): Promise<Task> {
     const res = await fetch(this.url(`/tasks/${id}/status`), {
       method: "PUT",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ status }), // UpdateStatusBody
+      headers: JSON_HEADERS,
+      body: JSON.stringify({ status }),
     });
-
-    await this.ensureOk(res);
-    return await this.getJson<Task>(res);
+    return this.getJson<Task>(await this.ensureOk(res));
   }
 
   async bulkUpdateStatus(ids: string[], status: Task["status"]): Promise<BulkUpdateResponse> {
     const res = await fetch(this.url(`/tasks/status/bulk`), {
       method: "PUT",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ ids, status }), // BulkUpdateTaskStatusRequest
+      headers: JSON_HEADERS,
+      body: JSON.stringify({ ids, status }),
     });
-
-    await this.ensureOk(res);
-    return await this.getJson<BulkUpdateResponse>(res);
+    return this.getJson<BulkUpdateResponse>(await this.ensureOk(res));
   }
 }

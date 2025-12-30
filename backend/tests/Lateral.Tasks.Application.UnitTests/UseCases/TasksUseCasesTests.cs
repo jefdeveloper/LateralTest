@@ -57,7 +57,7 @@ namespace Lateral.Tasks.Application.UnitTests.UseCases
             Assert.True(result.IsSuccess);
             Assert.NotNull(result.Value);
             Assert.Equal("New task", result.Value!.Description);
-            Assert.Equal(TaskItemStatus.Pending, result.Value.Status);
+            Assert.Equal(TaskItemStatus.Pending.ToString(), result.Value.Status);
 
             await taskRepository.Received(1).AddAsync(Arg.Any<TaskItem>(), Arg.Any<CancellationToken>());
             await taskRepository.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());

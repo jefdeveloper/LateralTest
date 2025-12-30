@@ -67,19 +67,20 @@ describe("toUserFriendlyError", () => {
     expect(err.message).toBe("Something blew up");
   });
 
-  test("fallback message when response has no body", async () => {
-    const res = new Response(null, { status: 503, headers: { "content-type": "text/plain" } });
+  test.each([
+    [null, 503, "Request failed (503)", { "content-type": "text/plain" }],
+    ["{not-json", 400, "Request failed (400)", { "content-type": "application/json" }],
+    ["", 418, "Request failed (418)", { "content-type": "text/plain" }],
+    ["{not-json", 200, "Request failed (200)", { "content-type": "application/json" }],
+  ])("fallback message for body=%p status=%p", async (body, status, expected, headers) => {
+    const res = new Response(body, { status, headers });
     const err = await toUserFriendlyError(res);
-    expect(err.message).toBe("Request failed (503)");
+    expect(err.message).toBe(expected);
   });
 
-  test("fallback message on JSON parse errors", async () => {
-    const res = new Response("{not-json", {
-      status: 400,
-      headers: { "content-type": "application/json" },
-    });
-
+  test("fallback message when response has no content-type header", async () => {
+    const res = new Response(null, { status: 404 });
     const err = await toUserFriendlyError(res);
-    expect(err.message).toBe("Request failed (400)");
+    expect(err.message).toBe("Request failed (404)");
   });
 });

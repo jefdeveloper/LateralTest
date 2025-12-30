@@ -33,21 +33,23 @@ export async function toUserFriendlyError(res: Response): Promise<Error> {
 
       if (isValidationProblem(data)) {
         const flat = Object.values(data.errors ?? {}).flat().filter(Boolean);
-        const msg = flat.length > 0 ? flat.join(" ") : data.detail ?? data.title ?? fallback;
-        return new Error(msg);
+        if (flat.length > 0) return new Error(flat.join(" "));
+        if (data.detail) return new Error(data.detail);
+        if (data.title) return new Error(data.title);
+        return new Error(fallback);
       }
 
       if (isProblemDetails(data)) {
-        const msg = data.detail ?? data.title ?? fallback;
-        return new Error(msg);
+        if (data.detail) return new Error(data.detail);
+        if (data.title) return new Error(data.title);
+        return new Error(fallback);
       }
+    } else {
+      const txt = await res.text();
+      if (txt) return new Error(txt);
     }
-
-    const txt = await res.text();
-    if (txt) return new Error(txt);
-
-    return new Error(fallback);
   } catch {
-    return new Error(fallback);
+    // ignore and fall through to fallback
   }
+  return new Error(fallback);
 }

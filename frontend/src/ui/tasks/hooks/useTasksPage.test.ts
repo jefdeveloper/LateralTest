@@ -48,7 +48,12 @@ describe("useTasksPage", () => {
   });
 
   test("when API fails, sets apiUnavailable and error", async () => {
-    const service = makeService([], true);
+    const service: ITasksService = {
+      list: vi.fn(async () => { throw new Error("Failed to fetch"); }),
+      create: vi.fn(),
+      updateStatus: vi.fn(),
+      bulkUpdateStatus: vi.fn(),
+    };
 
     const { result } = renderHook(() => useTasksPage(service));
 
@@ -56,7 +61,7 @@ describe("useTasksPage", () => {
 
     expect(service.list).toHaveBeenCalledTimes(1);
     expect(result.current.apiUnavailable).toBe(true);
-    expect(result.current.error).toMatch(/api unavailable/i);
+    expect(result.current.error?.toLowerCase()).toContain("failed to fetch");
   });
 
   test("retry calls list again", async () => {
