@@ -3,7 +3,7 @@ using Lateral.Tasks.Infrastructure.Context;
 using Lateral.Tasks.Infrastructure.Seed;
 using Microsoft.EntityFrameworkCore;
 
-namespace Lateral.Tasks.API.Composition
+namespace Lateral.Tasks.API.DependencyInjection
 {
     public static class WebApplicationInfrastructureExtensions
     {

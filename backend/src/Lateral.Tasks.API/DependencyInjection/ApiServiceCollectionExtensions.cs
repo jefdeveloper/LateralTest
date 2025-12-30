@@ -2,7 +2,7 @@
 using Lateral.Tasks.API.Middlewares;
 using Lateral.Tasks.API.Validators.Tasks;
 
-namespace Lateral.Tasks.API.Composition
+namespace Lateral.Tasks.API.DependencyInjection
 {
     public static class ApiServiceCollectionExtensions
     {

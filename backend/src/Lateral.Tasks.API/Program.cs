@@ -1,7 +1,6 @@
-using Lateral.Tasks.API.Composition;
+using Lateral.Tasks.API.DependencyInjection;
 using Lateral.Tasks.API.Endpoints;
 using Lateral.Tasks.Infrastructure.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);

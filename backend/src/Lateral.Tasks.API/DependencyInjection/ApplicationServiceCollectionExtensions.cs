@@ -3,7 +3,7 @@ using Lateral.Tasks.Application.Interfaces.UseCases;
 using Lateral.Tasks.Application.UseCases;
 using Lateral.Tasks.Application.Validators.Tasks;
 
-namespace Lateral.Tasks.API.Composition
+namespace Lateral.Tasks.API.DependencyInjection
 {
     public static class ApplicationServiceCollectionExtensions
     {

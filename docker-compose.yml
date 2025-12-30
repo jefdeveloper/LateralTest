@@ -25,7 +25,7 @@ services:
     container_name: lateral-api
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__Default: Host=postgres;Port=5432;Database=lateral_tasks;Username=lateral;Password=lateral
+      ConnectionStrings__TasksDb: Host=postgres;Port=5432;Database=lateral_tasks;Username=lateral;Password=lateral
     ports:
       - "5001:8080"
     depends_on:
