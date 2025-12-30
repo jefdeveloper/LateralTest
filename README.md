@@ -109,7 +109,7 @@ A centralized HTTP mapper converts results into proper HTTP responses:
 
 The API is documented using **OpenAPI** and exposed via **Scalar** (modern Swagger alternative).
 
-All request and response schemas are fully described and versioned.d
+All request and response schemas are fully described and versioned.
 
 Once the application is running, access:
 
@@ -121,8 +121,6 @@ https://localhost:5001/scalar
 - Create task
 - Update task status
 - Bulk update task status
-
-All request and response schemas are fully described.
 
 ---
 
@@ -204,7 +202,7 @@ Contains **infrastructure code** for external communication.
 ---
 
 #### `tests/`
-- **Purpose:** - **Purpose:** Provides consistent Material-UI theming and baseline styles for component tests.
+- **Purpose:** Provides consistent Material-UI theming and baseline styles for component tests.
 - **Responsibilities:**
   - Applies a shared MUI theme and disables button ripple effects.
   - Injects CssBaseline for global style normalization.
@@ -318,9 +316,7 @@ frontend/
 
 ### 🚀 Possible Improvements (Future Versions)
 
-These items represent common production concerns and are intentionally not part of the take-home scope.
-
-This project intentionally keeps a pragmatic scope suitable for a take-home assignment.  
+These items represent common production concerns and were intentionally kept out of scope to preserve a pragmatic take-home assignment.
 In a real-world production scenario, the following improvements could be incrementally introduced to enhance security, reliability, and user experience.
 
 ---
