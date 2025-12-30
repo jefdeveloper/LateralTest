@@ -86,13 +86,21 @@ export function TasksPage({ service }: Props) {
       ) : (
         <>
           {pageError && (
-            <Alert sx={{ mt: 2 }} severity="error">
+            <Alert
+              sx={{ mt: 2 }}
+              severity="error"
+              onClose={() => setPageError(null)}
+            >
               {pageError}
             </Alert>
           )}
 
           {vm.error && !pageError && (
-            <Alert sx={{ mt: 2 }} severity="error">
+            <Alert
+              sx={{ mt: 2 }}
+              severity="error"
+              onClose={() => vm.retry()}
+            >
               {vm.error}
             </Alert>
           )}
