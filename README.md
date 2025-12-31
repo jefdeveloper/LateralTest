@@ -354,6 +354,7 @@ In a real-world production scenario, the following improvements could be increme
 
 #### 🖥️ Frontend Improvements
 - **Filtering and searching** by task name and status
+- **Task grid ordering/sorting** by task name and status, with potential server-side support for large datasets
 - **Optimistic UI updates** for better perceived performance
 - **Global notifications and error handling**
 - **Improved empty, loading, and error states**
