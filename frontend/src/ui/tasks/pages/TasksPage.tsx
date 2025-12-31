@@ -85,29 +85,12 @@ export function TasksPage({ service }: Props) {
         <ApiUnavailable apiBase={apiBase} message={vm.error ?? undefined} onRetry={vm.retry} />
       ) : (
         <>
-          {pageError && (
+          {(pageError || vm.error) && (
             <Alert
               sx={{ mt: 2 }}
               severity="error"
-              onClose={e => {
-                if (e) e.preventDefault();
-                setPageError(null);
-              }}
             >
-              {pageError}
-            </Alert>
-          )}
-
-          {vm.error && !pageError && (
-            <Alert
-              sx={{ mt: 2 }}
-              severity="error"
-              onClose={e => {
-                if (e) e.preventDefault();
-                vm.retry();
-              }}
-            >
-              {vm.error}
+              {pageError || vm.error}
             </Alert>
           )}
 
