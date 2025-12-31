@@ -289,8 +289,8 @@ Tests focus on **behavior**, not implementation details.
 | Service | URL | 
 |---------|-----|
 | Frontend  | http://localhost:5173  |
-| Backend  | https://localhost:5001  |
-| API Docs  | https://localhost:5001/scalar  |
+| Backend  | http://localhost:5001  |
+| API Docs  | http://localhost:5001/scalar  |
 | PostgreSQL | localhost:5432 |
 
 Database migrations are applied automatically on startup.
