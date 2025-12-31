@@ -38,10 +38,6 @@ function transitionErrorMessage(current: Status, next: Status) {
   return `Invalid status transition: ${statusLabel(current)} → ${statusLabel(next)}.`;
 }
 
-/**
- * Detecta erro típico de rede/indisponibilidade (browser fetch, Vite proxy, CORS, etc.)
- * Objetivo: quando for esse caso => mostrar ApiUnavailable no TasksPage.
- */
 function isNetworkError(e: unknown) {
   const msg = String((e as any)?.message ?? e ?? "").toLowerCase();
 
@@ -90,7 +86,6 @@ export function useTasksPage(service: ITasksService) {
       } catch (e: any) {
         const message = e?.message ?? "API unavailable";
 
-        // ✅ aqui é o ponto principal da correção
         if (isNetworkError(e)) setApiUnavailable(true);
 
         setError(message);
@@ -103,7 +98,6 @@ export function useTasksPage(service: ITasksService) {
 
   useEffect(() => {
     void load(paged.page, paged.pageSize);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const retry = useCallback(() => {
@@ -139,7 +133,6 @@ export function useTasksPage(service: ITasksService) {
 
   const openAdd = useCallback(() => setDialog({ kind: "add" }), []);
 
-  // mantém regra: não abre single se Finished
   const openSingle = useCallback((task: Task) => {
     if (task.status === "Finished") return;
     setDialog({ kind: "single", task });
@@ -179,11 +172,11 @@ export function useTasksPage(service: ITasksService) {
       setBusy(true);
       try {
         await service.create(description);
-        closeDialog();
         refresh();
       } catch (e: any) {
         setError(e?.message ?? "Failed to create task");
       } finally {
+        closeDialog();
         setBusy(false);
       }
     },
@@ -212,11 +205,11 @@ export function useTasksPage(service: ITasksService) {
       setBusy(true);
       try {
         await service.updateStatus(singleTask.id, status);
-        closeDialog();
         refresh();
       } catch (e: any) {
         setError(e?.message ?? "Failed to update status");
       } finally {
+        closeDialog();
         setBusy(false);
       }
     },
@@ -249,6 +242,7 @@ export function useTasksPage(service: ITasksService) {
         refresh();
       } catch (e: any) {
         setError(e?.message ?? "Failed to bulk update status");
+        closeDialog();
       } finally {
         setBusy(false);
       }

@@ -40,7 +40,6 @@ export function AddTaskDialog({ open, busy, onClose, onConfirm }: Props) {
     onClose();
   }
 
-  // Prevent typing above MAX_DESC
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value;
     if (value.length <= MAX_DESC) {
@@ -50,7 +49,6 @@ export function AddTaskDialog({ open, busy, onClose, onConfirm }: Props) {
     }
   }
 
-  // Auto-trim on blur
   function handleBlur() {
     setDesc((d) => d.trim());
   }

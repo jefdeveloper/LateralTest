@@ -63,7 +63,6 @@ describe("AddTaskDialog", () => {
     expect((input as HTMLInputElement).value).toBe("");
     expect(getHelper()).toHaveTextContent("0/30");
 
-    // confirm ainda desabilitado => touched resetado também (sem erro de required)
     expect(screen.queryByText(/description is required/i)).not.toBeInTheDocument();
   });
 
@@ -163,7 +162,6 @@ describe("AddTaskDialog", () => {
     renderDialog();
     const user = userEvent.setup();
 
-    // vazio -> confirm disabled, então valida via Enter
     const input = getInput();
     await user.click(input);
     await user.keyboard("{Enter}");

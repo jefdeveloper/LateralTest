@@ -47,7 +47,6 @@ export function StatusDialog({
   const nextStatus: TaskStatus | undefined = allowed[0];
   const canConfirm = !busy && !locked && !!nextStatus;
 
-  // For accessibility, describe the main message
   const descId = "status-dialog-desc";
   return (
     <Dialog

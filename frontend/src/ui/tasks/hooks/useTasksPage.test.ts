@@ -71,7 +71,6 @@ describe("useTasksPage", () => {
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(service.list).toHaveBeenCalledTimes(1);
 
-    // next call succeeds
     (service.list as any).mockImplementationOnce(async (page: number, pageSize: number) =>
       makePaged([makeTask("1", "A", "Pending")], page, pageSize)
     );

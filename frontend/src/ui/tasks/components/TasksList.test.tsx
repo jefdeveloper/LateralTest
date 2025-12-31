@@ -37,11 +37,10 @@ describe("TasksList", () => {
     renderWithMui(
       <TasksList tasks={baseTasks} selected={selected} onToggleSelect={onToggleSelect} onOpenSingle={vi.fn()} />
     );
-    // Pending is checked
+
     expect(screen.getAllByRole("checkbox")[1]).toBeChecked();
-    // Finished is disabled
     expect(screen.getAllByRole("checkbox")[3]).toBeDisabled();
-    // Click on InProgress
+
     await userEvent.click(screen.getAllByRole("checkbox")[2]);
     expect(onToggleSelect).toHaveBeenCalledWith("2");
   });
@@ -61,9 +60,9 @@ describe("TasksList", () => {
     renderWithMui(
       <TasksList tasks={baseTasks} selected={selected} onToggleSelect={onToggleSelect} onOpenSingle={vi.fn()} />
     );
-    // Click header checkbox
+    
     await userEvent.click(screen.getAllByRole("checkbox")[0]);
-    // Should call for Pending and InProgress (not Finished)
+    
     expect(onToggleSelect).toHaveBeenCalledWith("1");
     expect(onToggleSelect).toHaveBeenCalledWith("2");
     expect(onToggleSelect).not.toHaveBeenCalledWith("3");

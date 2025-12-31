@@ -27,10 +27,7 @@ async function waitInitialLoad() {
   await screen.findByRole("button", { name: /Add task/i });
 }
 
-
-
 function getBulkButton() {
-  // O nome pode variar entre "Update status (bulk)" e "Update status in bulk"
   return (
     screen.queryByRole("button", { name: /Update status \(bulk\)/i }) ||
     screen.getByRole("button", { name: /Update status in bulk/i })
@@ -38,7 +35,6 @@ function getBulkButton() {
 }
 
 function getTasksTable() {
-  // O nome pode variar entre "tasks table" e "tasks list"
   return (
     screen.queryByRole("table", { name: /tasks (table|list)/i }) ||
     screen.getByRole("table")
@@ -75,10 +71,8 @@ describe("TasksPage", () => {
 
     await clickCheckboxByLabel(user, "select Pay bills");
 
-    // Pode haver delay para habilitar
     await waitFor(() => expect(bulkBtn).toBeEnabled());
   });
-
 
   test("bulk button enables with selection, but shows error alert if selecting different statuses and clicking bulk", async () => {
     const tasks: Task[] = [
@@ -103,7 +97,6 @@ describe("TasksPage", () => {
 
     await user.click(bulkBtn);
 
-    // O erro é exibido em um Alert, pois não é indisponibilidade de API
     const alert = await screen.findByRole("alert");
     expect(alert).toHaveTextContent(/bulk update is not allowed/i);
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
@@ -111,7 +104,6 @@ describe("TasksPage", () => {
   });
 
   test("shows ApiUnavailable when API/network is unavailable", async () => {
-    // Simulate a network error (Failed to fetch)
     const service: ITasksService = {
       list: vi.fn(async () => { throw new Error("Failed to fetch"); }),
       create: vi.fn(),
@@ -126,8 +118,6 @@ describe("TasksPage", () => {
     expect(screen.getByRole("button", { name: /try again/i })).toBeInTheDocument();
   });
 
-
-
   test("Finished row: checkbox is disabled and bulk remains disabled when only finished is present", async () => {
     const tasks: Task[] = [makeTask("1", "Done", "Finished")];
     const service = makeService(tasks);
@@ -141,7 +131,6 @@ describe("TasksPage", () => {
     const bulkBtn = getBulkButton();
     expect(bulkBtn).toBeDisabled();
 
-    // e não existe botão "Done" clicável (na tabela é texto/célula, não button)
     expect(screen.queryByRole("button", { name: "Done" })).not.toBeInTheDocument();
     expect(screen.getByText("Done")).toBeInTheDocument();
   });
@@ -159,7 +148,6 @@ describe("TasksPage", () => {
     const cell = within(table).getByText("X");
     await user.click(cell);
 
-    // Pode haver delay para abrir o dialog
     const dialog = await screen.findByRole("dialog");
     expect(within(dialog).getByText(/Update status/i)).toBeInTheDocument();
 
@@ -195,7 +183,6 @@ describe("TasksPage", () => {
 
     await user.click(bulkBtn);
 
-    // Pode haver delay para abrir o dialog
     const dialog = await screen.findByRole("dialog");
     expect(within(dialog).getByText(/Update status in bulk/i)).toBeInTheDocument();
 

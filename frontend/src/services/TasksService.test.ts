@@ -14,7 +14,6 @@ function makeTextResponse(status: number, text: string) {
   return new Response(text, { status, headers: { "content-type": "text/plain; charset=utf-8" } });
 }
 
-
 describe("TasksService", () => {
   const fetchMock = vi.fn();
 
